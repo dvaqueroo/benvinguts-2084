@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ca" data-version="20261123122311">
+<html lang="ca" data-version="20261123122619">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -26,7 +26,25 @@
       html:not(.is-device) .screen > .glass,
       html:not(.is-device) .screen > .decision,
       html:not(.is-device) .screen > .tutorial { translate: none; margin-left: var(--ox, 0px); margin-top: var(--oy, 0px); }
+      html.is-pwa, html.is-pwa body { height: var(--app-h); }
+      html.is-pwa .viewport { bottom: auto; height: var(--app-h); }
     </style>
+    <script>
+      // iOS (web afegida a la pantalla d'inici): l'alçada que dona el navegador és més curta que la
+      // pantalla (li resta la barra d'estat). En aquest mode es fa servir la mida física de la pantalla.
+      (function () {
+        var pwa = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+        if (!pwa || !/iP(hone|od|ad)|Macintosh/.test(navigator.userAgent) || !('ontouchend' in document)) return;
+        var d = document.documentElement;
+        d.classList.add('is-pwa');
+        function fit() {
+          var w = Math.min(screen.width, screen.height), hh = Math.max(screen.width, screen.height);
+          d.style.setProperty('--app-h', (innerWidth > innerHeight ? w : hh) + 'px');
+        }
+        fit();
+        addEventListener('orientationchange', fit);
+      })();
+    </script>
     <script defer src="./js/app.js"></script>
     <script>
       // Autoactualització: quan es publica una versió nova (version.txt canvia), la pàgina es recarrega.
