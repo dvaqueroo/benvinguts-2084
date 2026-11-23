@@ -1,0 +1,14 @@
+{
+  "name": "Benvinguts al 2084",
+  "short_name": "2084",
+  "lang": "ca",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#0B0F2A",
+  "background_color": "#0B0F2A",
+  "icons": [
+    { "src": "img/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

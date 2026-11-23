@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ca">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#0B0F2A" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description" content="Benvinguts al 2084 · Joc seriós sobre NEXUS, la IA que gestiona la ciutat." />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./img/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./img/icon.svg" />
+    <title>Benvinguts al 2084</title>
+    <script defer src="./js/three.min.js"></script>
+    <style>
+      /* Mòbil a pantalla completa: l'escenari ocupa tota la pantalla i la composició 402×874
+         queda centrada, amb la mateixa escala i posicions (al mode iPhone flotant no canvia res). */
+      html:not(.is-device) .device,
+      html:not(.is-device) .stage { width: var(--sw, 402px); height: var(--sh, 874px); }
+      html:not(.is-device) .screen > *:not(.edge-glow) { translate: var(--ox, 0px) var(--oy, 0px); }
+      html:not(.is-device) .screen > .decision,
+      html:not(.is-device) .screen > .tutorial { right: auto; bottom: auto; width: 402px; height: 874px; }
+      html:not(.is-device) .screen > .tutorial { outline: 3000px solid var(--tut-veil); }
+    </style>
+    <script defer src="./js/app.js"></script>
+  </head>
+  <body>
+    <div id="viewport" class="viewport">
+      <!-- iPhone flotante (tablet/desktop): marco + pantalla se mueven como una sola pieza. -->
+      <div id="device" class="device">
+        <div class="device-body" aria-hidden="true"></div>
+        <div id="device-grip" class="device-grip" aria-hidden="true"></div>
+        <main id="stage" class="stage" aria-live="polite"></main>
+        <div class="device-island" aria-hidden="true"></div>
+      </div>
+    </div>
+    
+  </body>
+</html>
