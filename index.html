@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ca">
+<html lang="ca" data-version="20261123121259">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -23,6 +23,21 @@
       html:not(.is-device) .screen > .tutorial { outline: 3000px solid var(--tut-veil); }
     </style>
     <script defer src="./js/app.js"></script>
+    <script>
+      // Autoactualització: quan es publica una versió nova (version.txt canvia), la pàgina es recarrega.
+      (function () {
+        var cur = document.documentElement.dataset.version;
+        function check() {
+          fetch('./version.txt?t=' + Date.now(), { cache: 'no-store' })
+            .then(function (r) { return r.ok ? r.text() : null; })
+            .then(function (v) { if (v && cur && v.trim() !== cur) location.reload(); })
+            .catch(function () {});
+        }
+        document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'visible') check(); });
+        window.addEventListener('pageshow', check);
+        setInterval(check, 30000);
+      })();
+    </script>
   </head>
   <body>
     <div id="viewport" class="viewport">

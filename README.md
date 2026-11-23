@@ -11,7 +11,9 @@ Per publicar-lo a GitHub Pages, puja el contingut d'aquesta carpeta a la branca 
 ```
 index.html            entrada del joc
 manifest.webmanifest  PWA
-sw.js                 service worker (ús sense connexió; puja VERSION a cada canvi)
+sw.js                 service worker (primer la xarxa; sense connexió, memòria cau)
+version.txt           versió publicada; si canvia, els mòbils es recarreguen sols
+publicar.sh           ./publicar.sh "missatge" → commit + push + Vercel
 js/three.min.js       three.js 0.169
 js/app.js             holograma (Canvas 2D de reserva + WebGL), orbe WebGL i joc
 fonts/                Sansation i Unbounded (woff2)
