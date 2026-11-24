@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ca" data-version="20261124170850">
+<html lang="ca" data-version="20261124171311">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -32,6 +32,15 @@
       html:not(.is-device) .screen > .tutorial { translate: none; margin-left: var(--ox, 0px); margin-top: var(--oy, 0px); }
       html.is-pwa, html.is-pwa body { height: var(--app-h); }
       html.is-pwa .viewport { bottom: auto; height: var(--app-h); }
+      /* iOS 26 (app a la pantalla d'inici): el sistema difumina la part superior si no hi ha una caixa fixa
+         i opaca a tota l'amplada al límit superior. Aquesta franja té fons sòlid però retallat al text
+         (no pinta res), així no tapa ni mou la composició. */
+      .edge-strip { display: none; }
+      html.is-pwa .edge-strip {
+        display: block; position: fixed; top: 0; left: 0; right: 0; z-index: 2147483647;
+        height: max(env(safe-area-inset-top), 11px); pointer-events: none;
+        background: #0B0F2A; -webkit-background-clip: text; background-clip: text; color: transparent;
+      }
     </style>
     <script>
       // iOS (web afegida a la pantalla d'inici): l'alçada que dona el navegador és més curta que la
@@ -68,6 +77,7 @@
     </script>
   </head>
   <body>
+    <div class="edge-strip" aria-hidden="true"></div>
     <div id="viewport" class="viewport">
       <!-- iPhone flotante (tablet/desktop): marco + pantalla se mueven como una sola pieza. -->
       <div id="device" class="device">
