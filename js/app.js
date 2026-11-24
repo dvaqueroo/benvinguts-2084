@@ -2106,7 +2106,7 @@
     uniforms: { tDiffuse: { value: null } },
     vertexShader: 'varying vec2 vUv; void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.); }',
     fragmentShader: 'uniform sampler2D tDiffuse; varying vec2 vUv;' +
-      'void main(){ vec3 c = clamp(texture2D(tDiffuse, vUv).rgb, 0., 1.); float a = max(c.r, max(c.g, c.b)); gl_FragColor = vec4(c, a); }'
+      'void main(){ vec3 c = clamp(texture2D(tDiffuse, vUv).rgb, 0., 1.) * (1. - smoothstep(.36, .5, length(vUv - .5))); float a = max(c.r, max(c.g, c.b)); gl_FragColor = vec4(c, a); }'
   };
 
   var GL = null, glFailed = false;
