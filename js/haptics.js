@@ -35,7 +35,26 @@
     try { navigator.vibrate(CONFIG.androidMs); } catch (e) { /* sense hàptica */ }
   }
 
-  window.NexusHaptics = { tap: tap, config: CONFIG };
+  // iPhone: el toc surt del clic que arriba just després del pointerup. Si l'acció canvia de
+  // pantalla abans, el control queda inert o desapareix i el clic (i la vibració) es perd.
+  // Per això, a l'iPhone l'acció espera que acabi aquest clic (uns pocs ms) i llavors s'executa.
+  var pending = null;
+  function defer(fn) {
+    if (!isIOS || !CONFIG.enabled) { fn(); return; }
+    if (pending) { var p = pending; pending = null; clearTimeout(p.t); p.fn(); }
+    var job = { fn: fn };
+    job.t = setTimeout(function () { if (pending === job) { pending = null; fn(); } }, 250);
+    pending = job;
+  }
+  if (isIOS) {
+    window.addEventListener('click', function () {
+      if (!pending) return;
+      var job = pending; pending = null; clearTimeout(job.t);
+      setTimeout(job.fn, 0); // després que la label hagi activat l'interruptor
+    }, true);
+  }
+
+  window.NexusHaptics = { tap: tap, defer: defer, config: CONFIG };
 
   if (!isIOS) return;
 
