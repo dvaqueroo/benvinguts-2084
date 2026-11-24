@@ -2303,6 +2303,8 @@
      INTERACCIÓ GLOBAL (oients passius: no bloquegen el swipe del selector)
      ========================================================= */
   var insts = [];
+  // Rellotge comú de les ones: totes les orbes comparteixen fase, així no hi ha salts en canviar d'orbe
+  var CLOCK = { t: 0, u: 0 };
   function forEachInst(fn) { for (var i = 0; i < insts.length; i++) fn(insts[i]); }
   window.addEventListener('pointermove', function (e) { forEachInst(function (o) { o.onMove(e); }); }, { passive: true });
   window.addEventListener('pointerdown', function (e) { forEachInst(function (o) { o.onDown(e); }); }, { passive: true });
@@ -2526,7 +2528,8 @@
     var introT = mainIntro ? 0 : 1;
 
     /* ---------- Bucle (el crida el bundle a cada fotograma) ---------- */
-    var t = 0, lastNow = 0, dirty = true, alive = true;
+    var t = CLOCK.t, lastNow = 0, dirty = true, alive = true, lastStatic = 0;
+    shared.uTime.value = CLOCK.u;
 
     function step(rdt) {
       t += rdt;
@@ -2616,14 +2619,17 @@
       var rdt = lastNow ? Math.min((now - lastNow) / 1000, 0.05) : 0.016;
       lastNow = now;
       if (mode === 'static') {
-        if (!dirty) return;
-        // Orbes laterals del selector: un sol fotograma, ja materialitzat
+        // Orbes laterals del selector: segueixen el rellotge comú a 30 fps
+        if (!dirty && now - lastStatic < 33) return;
+        lastStatic = now;
         introT = 1;
-        render(px, pxH, step(0.016));
+        t = CLOCK.t; shared.uTime.value = CLOCK.u;
+        render(px, pxH, step(0));
         dirty = false;
         return;
       }
       render(px, pxH, step(rdt));
+      CLOCK.t = t; CLOCK.u = shared.uTime.value;
     };
 
     inst.destroy = function () {
