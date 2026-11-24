@@ -59,7 +59,11 @@
     input.setAttribute('switch', '');
     input.tabIndex = -1;
     // El clic que la label reenvia a l'interruptor no ha d'arribar al botó (evita una segona acció)
-    input.addEventListener('click', function (e) { e.stopPropagation(); });
+    // iOS només vibra en passar a "encès": després de cada toc el tornem a apagar (sense vibració)
+    input.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setTimeout(function () { input.checked = false; }, 0);
+    });
     label.appendChild(input);
     el.appendChild(label);
   }
