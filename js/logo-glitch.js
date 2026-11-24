@@ -3,6 +3,7 @@
  * el 84 está cortado en franjas horizontales (32 azules + 32 magenta). En cada fotograma
  * algunas franjas se desplazan, se duplican con transparencia o cambian de color, y al final
  * todas se juntan en un 84 blanco y sólido. Cambios instantáneos, como en el prototipo.
+ * Bucle infinito de ida y vuelta, con 2 s de pausa en el logo blanco y en el de color.
  * Se activa solo cuando aparece <img class="portada-logo"> en el DOM.
  */
 (function () {
@@ -104,14 +105,21 @@
       if (!img.parentNode) return;
       img.parentNode.replaceChild(el, img);
       if (reduce) { draw(FRAMES[FRAMES.length - 1]); return; }
-      var i = 0;
+      // Bucle infinito de ida y vuelta: color → glitch → blanco (2 s) → glitch al revés → color (2 s) → …
+      var HOLD = 2;
+      var last = FRAMES.length - 1;
+      var i = 0, dir = 1, first = true;
       (function step() {
         if (!el.isConnected) return;
-        var f = FRAMES[i];
-        draw(f);
-        if (f.final) return;
-        i++;
-        setTimeout(step, f.t * 1000);
+        draw(FRAMES[i]);
+        var t;
+        if (i === last || (i === 0 && !first)) t = HOLD; // extremos: logo blanco o logo de color
+        else t = FRAMES[i].t;                            // primer arranque: 1 s, como en el Figma
+        first = false;
+        if (i === last) dir = -1;
+        else if (i === 0) dir = 1;
+        i += dir;
+        setTimeout(step, t * 1000);
       })();
     }).catch(function () { /* sin fetch (file://): se queda el logo estático */ });
   }
