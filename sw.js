@@ -1,7 +1,7 @@
 // Service worker: primer la xarxa (sempre la darrera versió publicada) i, si no hi ha
 // connexió, la còpia en memòria cau. No cal pujar VERSION a cada canvi.
 const VERSION = 'b2084-net-1';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './img/icon.svg'];
+const SHELL = ['./', './index.html', './manifest.webmanifest', './img/apple-touch-icon.png'];
 
 self.addEventListener('install', (e) => {
   e.waitUntil(caches.open(VERSION).then((c) => c.addAll(SHELL)).then(() => self.skipWaiting()));
