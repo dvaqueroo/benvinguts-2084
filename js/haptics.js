@@ -54,7 +54,37 @@
     }, true);
   }
 
-  window.NexusHaptics = { tap: tap, defer: defer, config: CONFIG };
+  // Zones tàctils (orbes i hologrames): reaccionen només si el toc encerta la figura.
+  // A l'iPhone, una label transparent cobreix la zona amb l'interruptor desactivat; el codi
+  // l'activa (hit) al pointerup només quan hi ha encert, i el clic que ve després fa el toc.
+  // Sense encert, o si el dit s'arrossega, no vibra. A Android, hit() és un pols normal.
+  function zone(host) {
+    if (!isIOS || !CONFIG.enabled || !host) return { hit: tap };
+    var label = document.createElement('label');
+    label.className = 'hap-zone';
+    label.setAttribute('aria-hidden', 'true');
+    var input = document.createElement('input');
+    input.type = 'checkbox';
+    input.setAttribute('switch', '');
+    input.tabIndex = -1;
+    input.disabled = true;
+    input.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setTimeout(function () { input.checked = false; input.disabled = true; }, 0);
+    });
+    label.appendChild(input);
+    host.appendChild(label);
+    var t = 0;
+    return {
+      hit: function () {
+        input.disabled = false;
+        clearTimeout(t);
+        t = setTimeout(function () { input.disabled = true; }, 400);
+      }
+    };
+  }
+
+  window.NexusHaptics = { tap: tap, defer: defer, zone: zone, config: CONFIG };
 
   if (!isIOS) return;
 
@@ -64,6 +94,9 @@
     '.hap-hit{position:absolute;top:0;right:0;bottom:0;left:0;border-radius:inherit;z-index:3;' +
     'background:transparent;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}' +
     '.hap-hit input{position:absolute;left:0;top:0;width:1px;height:1px;margin:0;opacity:0;pointer-events:none}' +
+    '.hap-zone{position:absolute;top:0;right:0;bottom:0;left:0;pointer-events:auto;background:transparent;' +
+    '-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}' +
+    '.hap-zone input{position:absolute;left:0;top:0;width:1px;height:1px;margin:0;opacity:0;pointer-events:none}' +
     'html.hap-off .hap-hit{display:none}';
   document.head.appendChild(css);
 

@@ -1434,6 +1434,7 @@
     view.style.cssText = 'position:absolute;inset:0;width:100%;height:100%;display:block;';
     el.appendChild(view);
     var vctx = view.getContext('2d');
+    var hapZone = window.NexusHaptics ? window.NexusHaptics.zone(el) : null;
 
     /* ---------- Paleta de l'orbe triada ---------- */
     var cp = CITY_PRESETS[preset], op = ORB_PRESETS[preset];
@@ -1830,7 +1831,7 @@
       dragging = false; dragId = null; setMouse(e);
       if (Math.hypot(e.clientX - down.x, e.clientY - down.y) < 6) {
         var hit = pick();
-        if (hit) { pulseT = 0; beat = 1; if (hit.object.userData.bid === SPHERE_ID) kick = 1; }
+        if (hit) { pulseT = 0; beat = 1; if (hit.object.userData.bid === SPHERE_ID) kick = 1; if (hapZone) hapZone.hit(); }
       }
       if (e.pointerType !== 'mouse') mouse.set(9, 9);
     }
@@ -2523,6 +2524,7 @@
           pulse = 1;
           var dir = node.worldToLocal(hitPoint.clone()).normalize();
           ripples.push({ dir: dir, t: 0 });
+          if (hapZone) hapZone.hit();
         }
         if (e.pointerType !== 'mouse') mouse.set(9, 9);
       },
@@ -2629,8 +2631,10 @@
       dirty = true;
     };
 
+    var hapZone = null;
     inst.draw = function (scale) {
       if (!alive) return;
+      if (!hapZone && mode === 'anim' && window.NexusHaptics && canvas.parentElement) hapZone = window.NexusHaptics.zone(canvas.parentElement);
       var px = Math.round(Math.min(MAX_PX, cssSize * (scale || 1) * Math.min(window.devicePixelRatio || 1, 2)));
       px = Math.max(16, px);
       var pxH = Math.round(px * (cssSize + extraH) / cssSize);
